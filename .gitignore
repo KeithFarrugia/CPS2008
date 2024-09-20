@@ -1,0 +1,4 @@
+/build
+/.vscode
+Common/Serialize/Serialize.pb.cc
+Common/Serialize/Serialize.pb.h

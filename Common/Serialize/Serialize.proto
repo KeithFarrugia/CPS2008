@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+/* Compile Commands
+ * cd <this_folder>
+ * protoc --cpp_out=. Serialize.proto
+ */
+
+/* ================================================================================== 
+ *                                    General Def                                    
+ * ==================================================================================
+ */
+
+// ------------------------------------------ Colour
+message PB_Colour {
+    uint32  r   = 1;
+    uint32  g   = 2;
+    uint32  b   = 3;
+    uint32  a   = 4;
+}
+
+// ------------------------------------------ Messgae Type
+enum PB_MessageType {
+    PB_INVALID   = 0;
+    PB_ERROR     = 1;
+    PB_INSERT    = 2;
+    PB_REMOVE    = 3;
+    PB_EDIT      = 4;
+    PB_BULK      = 5;
+    PB_CLEAR     = 6;
+    PB_UNDO      = 7;
+    PB_GENERIC   = 8;
+}
+
+
+
+
+/* ================================================================================== 
+ *                                     Draw Items                                    
+ * ==================================================================================
+ */
+
+// ------------------------------------------ Circle
+message PB_DrawCircle {
+    int32       x       = 1;
+    int32       y       = 2;
+    int32       radius  = 3;
+    bool        filled  = 4;
+    PB_Colour   colour  = 5;
+}
+
+// ------------------------------------------ Line
+message PB_DrawLine {
+    int32       x       = 1;
+    int32       y       = 2;
+    int32       x_to    = 3;
+    int32       y_to    = 4;
+    PB_Colour   colour  = 5;
+}
+
+// ------------------------------------------ Rectangle
+message PB_DrawRectangle {
+    int32       x       = 1;
+    int32       y       = 2;
+    int32       width   = 3;
+    int32       height  = 4;
+    bool        filled  = 5;
+    PB_Colour   colour  = 6;
+}
+
+// ------------------------------------------ Text
+message PB_DrawText {
+    int32       x       = 1;
+    int32       y       = 2;
+    string      text    = 3;
+    PB_Colour   colour  = 4;
+}
+
+
+
+
+/* ================================================================================== 
+ *                                   Data Transfer                                   
+ * ==================================================================================
+ */
+
+// ------------------------------------------ Draw Item Package
+message PB_DrawData{
+    int64   user_id         = 1;
+    int64   draw_id         = 2;
+
+    oneof   draw_item {
+        PB_DrawCircle       circle      = 3;
+        PB_DrawLine         line        = 4;
+        PB_DrawRectangle    rectangle   = 5;
+        PB_DrawText         text        = 6;
+    }
+}
+
+// ------------------------------------------ Bulk Item Package
+message PB_BulkDrawData{
+    repeated PB_DrawData draw_data  = 1;
+}
+
+// ------------------------------------------ Update Item Package
+message PB_UpdateDrawData{
+    int64       draw_id     = 1;
+    PB_DrawData draw_data   = 2;
+}
+
+// ------------------------------------------  General Package
+message PB_Package{
+    PB_MessageType message_type = 1;
+
+    oneof item_type {
+        PB_DrawData             draw_data       = 2;
+        string                  generic         = 3;
+        int64                   draw_id         = 4;
+        int64                   user_id         = 5;
+        PB_UpdateDrawData       edit_data       = 6;
+        PB_BulkDrawData         bulk_draw_data  = 7;
+    }
+}
